@@ -124,4 +124,4 @@ CREATE TABLE `vip_vehicle` (
 
 
 
-INSERT INTO `vip_vehicle` VALUES ('76561198308508913', 'SkyHao', '[\"HMCS\",\"B_MBT_01_TUSK_F\",\"O_T_MBT_02_cannon_ghex_F\",\"Mrshounka_pagani_c_noir\",\"O_Heli_Attack_02_dynamicLoadout_F\",\"OPTRE_Longsword_CAS\",\"C_Atlas_Warbird_01_F\",\"C_Kart_01_Fuel_F\"]', '0000-00-00 00:00:00');
+INSERT INTO `vip_vehicle` VALUES ('11111111111111111', 'SkyHao', '[\"HMCS\",\"B_MBT_01_TUSK_F\",\"O_T_MBT_02_cannon_ghex_F\",\"Mrshounka_pagani_c_noir\",\"O_Heli_Attack_02_dynamicLoadout_F\",\"OPTRE_Longsword_CAS\",\"C_Atlas_Warbird_01_F\",\"C_Kart_01_Fuel_F\"]', '0000-00-00 00:00:00');
