@@ -1,0 +1,127 @@
+任务端
+
+1.打开init.sqf添加以下代码，没有Init.sqf请自行新建
+
+_vehDialog = [] spawn compile PreprocessFileLineNumbers "dialog\TUT_fnc_veh.sqf";
+waitUntil {scriptDone _vehDialog};
+
+2. 打开description.ext，添加以下代码
+
+#include "dialog\Common.hpp"
+#include "dialog\TUT_gui_veh.hpp"
+class RscTitles
+{
+	
+	#include "dialog\TUT_gui_veh.hpp"
+};
+
+3（a）.//如果安装了infiSTAR，请将下列代码添加到CfgRemoteExec.hpp
+class CfgRemoteExec
+{
+	class Functions
+	{
+		mode = 1;
+		jip = 0;
+		class Exileserver_deploy_vehicle { allowedTargets=2; };
+		class ExileServer_Scrap_Vehicle { allowedTargets=2; };
+		class ExileServer_Get_Vehicle_List { allowedTargets=2; };
+	};
+	class Commands
+	{
+		mode=0;
+		jip=0;
+	};
+};
+3（b）//没有安装infiSTAR找到class CfgRemoteExec
+修改如下
+class CfgRemoteExec
+{
+    class Functions
+    {
+        mode = 1;
+        jip = 0;
+
+        class ExileServer_system_network_dispatchIncomingMessage { allowedTargets = 2; };
+		class ExAdServer_fnc_clientRequest { allowedTargets=2; };
+		class Exileserver_deploy_vehicle { allowedTargets=2; };
+		class ExileServer_Scrap_Vehicle { allowedTargets=2; };
+		class ExileServer_Get_Vehicle_List { allowedTargets=2; };
+    };
+
+    class Commands
+    {
+		mode = 0;
+		jip = 0;
+    };
+};
+
+4. 打开Config.cpp，找到class CfgXM8 添加以下代码
+
+class CfgXM8 
+{
+	class SkyHao_Deploy
+	{
+		appID = "App05";
+		title = "召唤座驾";
+	};
+};
+
+找到class XM8_App14_Button添加以下代码
+
+class XM8_App14_Button: RscExileXM8AppButton1x1
+{
+    textureNoShortcut = "\exile_assets\texture\item\Exile_Item_Toolbox.paa";
+    text = "召唤座驾";
+    onButtonClick = "[] call TUT_fnc_OpenVehUI";
+    resource = "";
+};
+
+
+服务端
+
+1.将服务端里面的skyhao_server.pbo拷贝到@ExileServer\addons目录下
+2.打开exile.ini数据库配置文件，添加以下代码
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;载具设置
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[GetVipVehicle]
+SQL1_1 = SELECT Vehicle_Class FROM Vip_Vehicle WHERE UID = ?
+Number Of Inputs = 1
+SQL1_INPUTS = 1
+OUTPUT = 1
+[SeveVipVehicle]
+SQL1_1 = INSERT INTO UserVehicle SET UID = ?, used = 1, VehicleNetId=?, VehicleID = ?
+Number Of Inputs = 3
+SQL1_INPUTS = 1,2,3
+[GetVipVehicleC]
+SQL1_1 = SELECT used,VehicleNetId,VehicleID FROM UserVehicle WHERE UID = ?
+Number Of Inputs = 1
+SQL1_INPUTS = 1
+OUTPUT = 1,2,3
+[DeleteVipVehicle]
+SQL1_1 = DELETE FROM UserVehicle WHERE UID = ?
+Number Of Inputs = 1
+SQL1_INPUTS = 1
+
+3.打开数据库执行以下代码
+
+CREATE TABLE `uservehicle` (
+  `UID` varchar(32) NOT NULL,
+  `used` int(11) DEFAULT '0',
+  `VehicleNetId` int(11) NOT NULL DEFAULT '0',
+  `VehicleID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`UID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `vip_vehicle` (
+  `UID` varchar(32) NOT NULL,
+  `Name` varchar(64) NOT NULL,
+  `Vehicle_Class` text NOT NULL,
+  `Vehicle_Date` datetime NOT NULL,
+  PRIMARY KEY (`UID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+INSERT INTO `vip_vehicle` VALUES ('76561198308508913', 'SkyHao', '[\"HMCS\",\"B_MBT_01_TUSK_F\",\"O_T_MBT_02_cannon_ghex_F\",\"Mrshounka_pagani_c_noir\",\"O_Heli_Attack_02_dynamicLoadout_F\",\"OPTRE_Longsword_CAS\",\"C_Atlas_Warbird_01_F\",\"C_Kart_01_Fuel_F\"]', '0000-00-00 00:00:00');
